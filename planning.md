@@ -11,6 +11,9 @@
 
 <!-- What domain did you choose? Why is this knowledge valuable and hard to find through official channels? -->
 
+Student reviews of professors and courses at the University of Wisconsin–Stevens Point
+
+This domain covers student experiences with professors and courses, including teaching style, workload, exam difficulty, grading practices, and class expectations. This knowledge is valuable because official course catalogs and faculty webpages provide only formal descriptions and often do not reflect what students actually experience in the classroom. Students typically need to search multiple websites and discussion forums to find this information.
 ---
 
 ## Documents
@@ -20,16 +23,28 @@
 
 | # | Source | Description | URL or location |
 |---|--------|-------------|-----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | | | |
+#	Source	Type	URL or file path
+1	Rate My Professors – Professor A	Review Page	https://www.ratemyprofessors.com
+
+2	Rate My Professors – Professor B	Review Page	https://www.ratemyprofessors.com
+
+3	Rate My Professors – Professor C	Review Page	https://www.ratemyprofessors.com
+
+4	Reddit discussion about course registration	Reddit Thread	https://www.reddit.com
+
+5	Reddit discussion about easiest electives	Reddit Thread	https://www.reddit.com
+
+6	Reddit discussion about difficult CS courses	Reddit Thread	https://www.reddit.com
+
+7	Student Discord FAQ screenshots	Community Resource	./documents/discord_faq.pdf
+8	Student club advice page	Website	https://www.uwsp.edu
+
+9	Unofficial student course guide	PDF	./documents/course_guide.pdf
+10	Student forum discussion about professors	Forum Thread	https://example-forum.com/thread
+
+11	Reddit thread on best professors for freshmen	Reddit Thread	https://www.reddit.com
+
+12	Student blog about course experiences	Blog Post	https://example-blog.com
 
 ---
 
