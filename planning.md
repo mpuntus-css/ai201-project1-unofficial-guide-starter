@@ -61,6 +61,13 @@ This domain covers student experiences with professors and courses, including te
 
 **Reasoning:**
 
+
+I will split documents into chunks of approximately 800 characters with an overlap of 150 characters between consecutive chunks. Most of my sources consist of student reviews, Reddit discussions, and forum posts that range from a few sentences to several paragraphs. An 800-character chunk is large enough to capture a complete opinion about a professor, course, or student experience while remaining focused on a single topic.
+
+The 150-character overlap helps preserve context when important information appears near the boundary between two chunks. For example, a student may mention a professor's teaching style in one sentence and describe exam difficulty in the next. Without overlap, those related details could be separated into different chunks and become harder to retrieve together.
+
+If the chunks were too small, the retrieval system might return isolated comments that lack enough context to answer a question accurately. If the chunks were too large, multiple topics could be combined into a single embedding, reducing retrieval precision. The chosen chunk size and overlap provide a balance between preserving context and maintaining focused semantic search results.
+
 ---
 
 ## Retrieval Approach
@@ -71,11 +78,18 @@ This domain covers student experiences with professors and courses, including te
      would you weigh in choosing a different embedding model — context length, multilingual
      support, accuracy on domain-specific text, latency? -->
 
-**Embedding model:**
+**Embedding model:** all-MiniLM-L6-v2 via the Sentence-Transformers library
 
-**Top-k:**
+**Top-k:** 5
 
 **Production tradeoff reflection:**
+
+
+I will use the all-MiniLM-L6-v2 embedding model because it is lightweight, fast, and performs well for semantic search on short text such as student reviews, forum posts, and Reddit discussions. The model converts both documents and user queries into vector representations, allowing the system to find relevant information even when the query does not contain the exact same words as the source documents.
+
+For each query, I will retrieve the top 5 most relevant chunks. Retrieving too few chunks could cause important information to be missed, while retrieving too many chunks could introduce irrelevant information and make it more difficult for the language model to generate a focused response. A top-k value of 5 provides a balance between coverage and precision.
+
+If I were deploying this system for real users and cost was not a constraint, I would consider using a larger and more powerful embedding model that provides better semantic understanding and retrieval accuracy. I would evaluate tradeoffs such as context length, multilingual support, and performance on domain-specific student review data. Larger models can improve retrieval quality and handle more nuanced queries, but they require more computation, storage, and response time. The choice would depend on whether retrieval accuracy or system speed is the higher priority.
 
 ---
 
@@ -88,11 +102,16 @@ This domain covers student experiences with professors and courses, including te
 
 | # | Question | Expected answer |
 |---|----------|-----------------|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+1. What do students say about Professor Smith's grading style?	
+The response should summarize common opinions from reviews, such as whether grading is fair, lenient, or strict, and reference supporting sources.
+2. How difficult is the Introduction to Programming course according to students?	
+The response should summarize student comments about workload, exams, projects, and overall difficulty.
+3. Which professors are most frequently recommended for introductory computer science courses?	
+The response should identify the professors that receive the most positive recommendations in the collected sources and explain why students recommend them.
+4. What complaints do students most often have about course registration?	
+The response should summarize recurring issues mentioned in Reddit threads or forums, such as limited seats, waitlists, or scheduling conflicts.
+5. What advice do upperclassmen give to freshmen taking their first CS courses?	
+The response should summarize common recommendations, such as attending office hours, starting assignments early, and managing course load.
 
 ---
 
@@ -102,9 +121,8 @@ This domain covers student experiences with professors and courses, including te
      Consider: noisy or inconsistent documents, missing source attribution, off-topic
      retrieval, chunks that split key information across boundaries. -->
 
-1.
-
-2.
+1. Noisy or inconsistent reviews. Student reviews are highly subjective, and different students may have very different opinions about the same professor or course. This could make it difficult for the system to provide a clear answer when retrieved documents contain conflicting information.
+2. Off-topic retrieval and chunking issues. Some Reddit threads and forum discussions may contain unrelated comments that are not relevant to the user's question. In addition, important information may be split across chunk boundaries, causing the retrieval system to miss context or return incomplete answers. Using chunk overlap can help reduce this problem, but it may still occur in some cases.
 
 ---
 
@@ -115,6 +133,51 @@ This domain covers student experiences with professors and courses, including te
      Label each stage with the tool or library you're using.
      You can use ASCII art, a Mermaid diagram, or embed a sketch as an image.
      You'll use this diagram as context when prompting AI tools to implement each stage. -->
+
+Architecture
+------------------------
+| Document Ingestion   |
+| requests, BS4, PDFs  |
+------------------------
+           |
+           v
+------------------------
+| Chunking             |
+| 800-char chunks      |
+| 150-char overlap     |
+------------------------
+           |
+           v
+------------------------
+| Embedding +          |
+| Vector Store         |
+| all-MiniLM-L6-v2     |
+| ChromaDB             |
+------------------------
+           |
+           v
+------------------------
+| Retrieval            |
+| Semantic Search      |
+| Top-k = 5            |
+------------------------
+           |
+           v
+------------------------
+| Generation           |
+| LLM (ChatGPT)        |
+| Answer + Sources     |
+------------------------
+
+Pipeline Flow:
+
+Document Ingestion → Chunking → Embedding + Vector Store → Retrieval → Generation
+
+Document Ingestion: Collect reviews, Reddit discussions, forum posts, and other sources.
+Chunking: Split documents into approximately 800-character chunks with 150-character overlap.
+Embedding + Vector Store: Generate embeddings using all-MiniLM-L6-v2 and store them in ChromaDB.
+Retrieval: Convert the user's question into an embedding and retrieve the top 5 most relevant chunks.
+Generation: Use an LLM to generate a response based on the retrieved chunks and provide source-based answers.
 
 ---
 
@@ -129,6 +192,38 @@ This domain covers student experiences with professors and courses, including te
      "I'll use AI to help me code" is not a plan.
      "I'll give Claude my Chunking Strategy section and ask it to implement chunk_text()
      with my specified chunk size and overlap" is a plan. -->
+
+
+1. Document Ingestion
+AI Tool: ChatGPT
+Input: Domain description, document source list, and project requirements.
+Expected Output: Python code that loads documents from URLs and local files while preserving metadata such as source names and URLs.
+Verification: Test the code on several documents and confirm that all text and metadata are correctly extracted and stored.
+2. Chunking
+AI Tool: ChatGPT
+Input: Chunking Strategy section specifying 800-character chunks with 150-character overlap.
+Expected Output: A Python chunk_text() function that splits documents according to the specified chunk size and overlap.
+Verification: Run the function on sample documents and verify that chunk sizes are correct and overlapping text appears in adjacent chunks.
+3. Embedding and Vector Store
+AI Tool: GitHub Copilot
+Input: Retrieval Approach section specifying the use of the all-MiniLM-L6-v2 model and ChromaDB.
+Expected Output: Code that generates embeddings for each chunk and stores them in a vector database with metadata.
+Verification: Confirm that every chunk has an embedding and that embeddings can be successfully stored and retrieved from the database.
+4. Retrieval
+AI Tool: ChatGPT
+Input: Retrieval requirements, embedding model information, and top-k value of 5.
+Expected Output: A retrieval function that converts a user query into an embedding and returns the five most relevant chunks.
+Verification: Test the function using the evaluation questions and confirm that the returned chunks are relevant to the query.
+5. Response Generation
+AI Tool: ChatGPT
+Input: Retrieved chunks and the Evaluation Plan questions.
+Expected Output: A response-generation prompt and code that uses retrieved information to answer user questions.
+Verification: Compare generated answers against the source documents to ensure the answers are accurate and supported by the retrieved evidence.
+6. System Testing
+AI Tool: ChatGPT
+Input: Evaluation Plan and expected answers.
+Expected Output: A simple testing script that runs the five evaluation questions and records the system's responses.
+Verification: Compare the generated answers with the expected answers and evaluate whether the retrieved sources support the responses.
 
 **Milestone 3 — Ingestion and chunking:**
 
