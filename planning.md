@@ -55,18 +55,18 @@ This domain covers student experiences with professors and courses, including te
      numbers fit the structure of your documents.
      A review-heavy corpus warrants different chunking than a long FAQ. -->
 
-**Chunk size:**
+**Chunk size:** 200 characters
 
-**Overlap:**
+**Overlap:** 50 characters
 
 **Reasoning:**
 
 
-I will split documents into chunks of approximately 800 characters with an overlap of 150 characters between consecutive chunks. Most of my sources consist of student reviews, Reddit discussions, and forum posts that range from a few sentences to several paragraphs. An 800-character chunk is large enough to capture a complete opinion about a professor, course, or student experience while remaining focused on a single topic.
+I will split documents into chunks of approximately 200 characters with an overlap of 50 characters between consecutive chunks. Most of my sources consist of short student review passages that work better when chunked at a smaller granularity, so a 200-character chunk keeps each piece tightly focused on a single opinion or experience.
 
-The 150-character overlap helps preserve context when important information appears near the boundary between two chunks. For example, a student may mention a professor's teaching style in one sentence and describe exam difficulty in the next. Without overlap, those related details could be separated into different chunks and become harder to retrieve together.
+The 50-character overlap helps preserve context when important information appears near the boundary between two chunks. Without overlap, a review sentence could be split awkwardly and lose the connection between a professor's teaching style, workload, or grading comments.
 
-If the chunks were too small, the retrieval system might return isolated comments that lack enough context to answer a question accurately. If the chunks were too large, multiple topics could be combined into a single embedding, reducing retrieval precision. The chosen chunk size and overlap provide a balance between preserving context and maintaining focused semantic search results.
+If the chunks were too small, the retrieval system might return fragments that lack enough context to answer a question accurately. If the chunks were too large, multiple topics could be combined into a single embedding, reducing retrieval precision. The chosen chunk size and overlap provide a balance between preserving context and maintaining focused semantic search results.
 
 ---
 
